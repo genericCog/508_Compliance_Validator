@@ -1,0 +1,437 @@
+<!doctype html>
+
+<html lang="en-us">
+<head>
+    <title>(o^^)o Standard Template</title>
+    <meta name="author" content="Adam Cherochak">
+    <meta name="description" content="sandbox development environment">
+    <meta name="keywords" content="TEST, ColdFusion, HTML,CSS,JavaScript, SQL">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE"/>
+    <meta charset="utf-8"/>
+    
+    	<!-- Resource Files -->
+    <script src="jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="jquery-ui-smoothness.css">
+    <link rel="stylesheet" href="style_standard_template.css">
+<!--    
+    <link rel="stylesheet" href="css/style_standard_template.css">
+    
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+-->
+    
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+        <script src="rsc/html5shiv.js"></script>
+        <script>
+            document.createElement("header" );
+            document.createElement("footer" );
+            document.createElement("section"); 
+            document.createElement("aside"  );
+            document.createElement("nav"    );
+            document.createElement("article"); 
+            document.createElement("hgroup" ); 
+            document.createElement("time"   );
+        </script>
+        <noscript>
+            <strong>Warning !</strong>
+            Because your browser does not support HTML5, some elements are created using JavaScript.
+            Unfortunately your browser has disabled scripting. Please enable it in order to display this page.
+        </noscript>
+    <![endif]-->
+</head>
+
+<body>
+<header>
+
+</header>
+<div class="mainLayout">
+<section id="section_summary" data-rule-element="508_summary" class="508_basic">
+    <article>
+        <h2>Summary</h2>
+        <p>
+        	The intention of 508 is to create each HTML markup that can be understood by assistive technology (AT). 
+            The purpose of this HTML document is to provide guidance for each element being tested.
+            For each element a code snippet is provided along with a working example.
+            <br>
+             Remember, all content hidden visually with CSS will become visible if styles are disabled.
+            <br>
+            The following is a list of functions called to perform 508 Compliance checks on webpages. 
+            <br>
+            <a href="https://webstandards.hhs.gov/standards/1" target="_blank">508 Compliance Resources Link</a>
+        </p>
+        <pre class="code">
+        	<code>
+<!--             -->function validateFile(f, doc){
+<!--             -->   //required rules
+<!--             -->   if($('#img_rules').is(':checked')){imgTagRules(f, doc);}
+<!--             -->   if($('#table_rules').is(':checked')){tableRules(f, doc);}
+<!--             -->   if($('#frame_rules').is(':checked')){frameRules(f, doc);}
+<!--             -->   if($('#button_rules').is(':checked')){buttonRules(f, doc);}
+<!--             -->   if($('#form_rules').is(':checked')){formRules(f, doc);}
+        
+<!--             -->   //warning rules
+<!--             -->   if($('#title_rules').is(':checked')){ titleTagRule(f, doc);}
+<!--             -->   if($('#lang_rules').is(':checked')){ langAttributeRule(f, doc);}
+<!--             -->   if($('#list_rules').is(':checked')){listRule(f, doc);}
+<!--             -->}</code></pre>
+    </article>
+</section>
+
+    <aside id="aside_main" class="sidebar">
+        <p>
+        	<span class="ui-icon ui-icon-comment"></span>Placeholder for MAIN sidebar content.
+        	
+        </p>
+    </aside>
+</div>
+
+<section id="section_table" data-rule-element="508_table" class="508_basic">
+    <!--Use this for tables: https://github.com/mdn/learning-area/blob/master/html/tables/basic/timetable-fixed.html-->
+    <h2>Tables</h2>
+    <p>
+        <h3>Reference</h3>https://www.section508.va.gov/support/html/7_0.asp <br>https://www.w3.org/WAI/tutorials/tables/irregular/
+        <h3>Requirements:</h3>Section 508 §1194.22 (g)
+        <ul>
+            <li>Each data table is indicated with a table tag.</li>
+            <li>Each row header and column header is identified with a th tag.</li>
+            <li>Each cell that's not part of a header is identified with a td tag.</li>
+            <li>Row and column headers are in the same table with table data cells. Note: Additional Data Table Requirements, for more information on this criteria.</li>
+            <li>Each defined row or column header has associated content.</li>
+            <li>When the table header is not the first cell in the row or column, the scope attribute is used and has the appropriate value of "row" or "col" (column).</li>
+        </ul>
+    <p></p>
+    <span class="">Code Sample 508 Compliant Table </span>
+    <pre class="code">
+        <code>
+<!--             -->&lt;table>
+<!--             -->   &lt;caption>Two Row, Two Column Table&lt;/caption>
+<!--             -->   &lt;tr>&lt;th scope="col">Column 1&lt;/th>           &lt;th scope="col">Column 2&lt;/th>&lt;/tr>
+<!--             -->   &lt;tr>&lt;td scope="row">Row: 1, Column: 1&lt;/td>  &lt;td>Row: 1, Column: 2&lt;/td>&lt;/tr>
+<!--             -->   &lt;tr>&lt;td scope="row">Row: 2, Column: 1&lt;/td>  &lt;td>Row: 2, Column: 2&lt;/td>&lt;/tr>
+<!--             -->   &lt;tr>&lt;td scope="row">Row: 3, Column: 1&lt;/td>  &lt;td>Row: 3, Column: 2&lt;/td>&lt;/tr>
+<!--             -->&lt;/table>
+        </code>
+    </pre>
+
+    <div class="cf">
+        <div id="left_box" class="col_1" style="float:left;padding-right:0.5%;">
+            <table>
+            	<caption>Production Matrix | 508 Compliant</caption>
+                <col>
+                <colgroup span="2"></colgroup>
+                <colgroup span="2"></colgroup>
+                <tr>
+                <td rowspan="2"></td>
+                <th colspan="2" scope="colgroup">Mars</th> <th colspan="2" scope="colgroup">Venus</th>
+                </tr>
+                <tr>
+                <th scope="col">Produced</th><th scope="col">Sold</th><th scope="col">Produced</th><th scope="col">Sold</th>
+                </tr>
+                <tr>
+                <th scope="row">Teddy Bears</th>
+                <td>50,000</td><td>30,000</td><td>100,000</td><td>80,000</td>
+                </tr>
+                <tr>
+                <th scope="row">Board Games</th>
+                <td>10,000</td><td>5,000</td><td>12,000</td><td>9,000</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col_2" style="float:left;padding-left:0.5%;">
+            <table class="non_compliant">
+                <caption >Example Table | 508 NON-Compliant</caption>
+                <tr><td class="non_compliant"><span style="font-weight: bold;">Column 1</span></td><td class="non_compliant"><span style="font-weight: bold;">Column </span>2</td><td class="non_compliant"><span style="font-weight: bold;">Column 3</span></td></tr>
+                <tr><td class="non_compliant">Row: 1, Column: 1</td><td class="non_compliant">Row: 1, Column: 2</td><td class="non_compliant">Row: 1, Column: 3</td></tr>
+                <tr><td class="non_compliant">Row: 2, Column: 1</td><td class="non_compliant">Row: 2, Column: 2</td><td class="non_compliant">Row: 2, Column: 3</td></tr>
+                <tr><td class="non_compliant">Row: 3, Column: 1</td><td class="non_compliant">Row: 3, Column: 2</td><td class="non_compliant">Row: 3, Column: 3</td></tr>
+            </table>
+        </div>
+    </div>
+</section>
+<aside id="aside_table" class="sidebar">
+	<p>Placeholder for TABLE sidebar content.</p>
+</aside>
+
+
+<section id="section_image" data-rule-element="508_image" class="508_basic">
+    <article>
+        <p>
+        	<span class="summary_outline">Summary</span>
+                If an image contains a logo or trademark, make sure it's accompanied by a brief description. It should not be described in detail. A logo's description can be as simple as "[organization] logo". 
+                logo with compliant alt text 
+                If selecting the logo will take the user to the site's home page, make sure the logo is described as "home", not "logo".
+            <span class="summary_outline">Requirement</span>
+            <ul>
+                <li>Briefly, but meaningfully describes what the frame does or contains—for example, Navigation Bar, Main Content.</li>
+                <li>Contains no location-based words such as top, bottom, right, and left. </li>
+                <li>Contains no redundant words like frame and section.</li>
+            </ul>
+            <span class="summary_outline">Resource</span>
+            <span class="summary_outline">Code Sample 508 Compliant Frame</span>
+        <p></p>
+        <pre class="code">
+            <code>
+<!--         -->&lt;iframe name="meaningfulName" title="meaningfulTitle" src="file.html" />
+<!--         -->   &lt;figure>
+<!--         -->      &lt;img class="508_image_small" 
+<!--         -->         width="150" height="200"
+<!--         -->         src="img/imageFile.png" 
+<!--         -->         alt="Liquid layout infographic describes best practices of CSS sizing, by @fatasai." />
+<!--         -->   &lt;figcaption>
+<!--         -->      &lt;span>Liquid layout infographic describes best practices of CSS sizing
+<!--         -->   &lt;/figcaption>
+<!--         -->&lt;/figure>  
+            </code>
+        </pre>
+        <div class="cf">
+            <div id="box_example_image_left" class="col_1" style="float:left;padding-right:0.5%;min-height:150px;max-height:400px;height:300pxmin-width:150px;max-width:400px;width:400px;">
+                <figure>
+                    <img class="508_image_small" 
+                        width="150" height="200"
+                        src="img/liquidLayouts.png" 
+                        alt="Liquid layout infographic describes best practices of CSS sizing, by @fatasai." />
+                    <figcaption>
+                        <span>Liquid layout infographic describes best practices of CSS sizing</span>
+                    </figcaption>
+                </figure>            
+            </div>
+               
+            <div id="box_example_image_right" class="col_2" style="float:left;padding-right:0.5%;min-height:150px;max-height:400px;height:300pxmin-width:150px;max-width:400px;width:400px;">
+                <figure>
+                    <img class="508_image_small" 
+                        width="150" height="200"
+                        src="img/liquidLayouts.png" 
+                        alt="Liquid layout infographic describes best practices of CSS sizing, by @fatasai." />
+                    <figcaption>
+                        <span>Liquid layout infographic describes best practices of CSS sizing</span>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </article>
+</section>
+<aside id="aside_image" class="sidebar">
+	<p>Placeholder for IMAGE sidebar content.</p>
+</aside>
+
+<section id="section_frame" data-rule-element="508_frame" class="508_basic">
+    <article>
+        <p>
+        	Summary 
+            Requirement
+            <ul>
+                <li>Briefly, but meaningfully describes what the frame does or contains—for example, Navigation Bar, Main Content.</li>
+                <li>Contains no location-based words such as top, bottom, right, and left. </li>
+                <li>Contains no redundant words like frame and section.</li>
+            </ul>
+            Resource
+            <span class="summary_outline">Code Sample 508 Compliant Frame</span>
+        <p></p>
+        <pre class="code">
+            <code>
+<!--         -->&lt;iframe name="meaningfulName" title="meaningfulTitle" src="file.html" /> 
+            </code>
+        </pre>
+        <span class="summary_outline">Code Sample 508 Compliant Frame, Hidden</span>
+        <pre class="code">
+            <code>
+<!--         -->&lt;iframe name="hidden" title="No user content" src="empty.html" width="0%" height="0%" style="width:0px;height:0px;" /> 
+            </code>
+        </pre>
+    <div class="cf">
+        <div id="box_example_frame_left" class="col_1" style="float:left;padding-right:0.5%;min-height:150px;max-height:400px;height:300pxmin-width:150px;max-width:400px;width:400px;">
+            <figcaption style="text-align:center;">Example 508 Compliant Frame</figcaption>
+            <iframe id="frame_508_compliant"
+                title="Example of a 508 Compliant Frame"
+                name="frame_508_compliant" alt="Example of a 508 Compliant Frame"
+                width="400" height="300"
+                frameborder="0" scrolling="no"
+                marginheight="0" marginwidth="0"
+                src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es-419&amp;geocode=&amp;q=buenos+aires&amp;sll=37.0625,-95.677068&amp;sspn=38.638819,80.859375&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Buenos+Aires,+Argentina&amp;z=11&amp;ll=-34.603723,-58.381593&amp;output=embed">
+			</iframe>
+            <p style="text-align:center; line-height:.15em;">
+                <small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=es-419&amp;geocode=&amp;q=buenos+aires&amp;sll=37.0625,-95.677068&amp;sspn=38.638819,80.859375&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Buenos+Aires,+Argentina&amp;z=11&amp;ll=-34.603723,-58.381593" 
+                style="color:#0000FF;text-align:left">See bigger map</a></small>
+            </p>            
+        </div>
+        
+        <div class="" style="height:50px;min-height:10px;width:10%;min-width:5%;max-width:10%;float:left;">
+            <script>
+                var neighbor_height = $( "#left_box" ).height();
+                $( "#empty_two_column" ).height( neighbor_height );
+                //alert( neighbor_height );
+            </script>
+        </div>
+        
+        <div id="box_example_frame_right" class="col_2" style="float:left;padding-right:0.5%;min-height:150px;max-height:400px;height:300pxmin-width:150px;max-width:400px;width:400px;">
+            <figcaption style="text-align:center;">Example 508 NON-Compliant Frame</figcaption>
+            <iframe id="frame_508_non_compliant"
+                title="Exampleofa508NON-CompliantFrame"
+                name="" alt=""
+                width="400" height="300"
+                frameborder="0" scrolling="no"
+                marginheight="0" marginwidth="0"
+                src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es-419&amp;geocode=&amp;q=buenos+aires&amp;sll=37.0625,-95.677068&amp;sspn=38.638819,80.859375&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Buenos+Aires,+Argentina&amp;z=11&amp;ll=-34.603723,-58.381593&amp;output=embed">
+            </iframe>
+            <p style="text-align:center; line-height:.15em;">
+                <small><a href="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=es-419&amp;geocode=&amp;q=buenos+aires&amp;sll=37.0625,-95.677068&amp;sspn=38.638819,80.859375&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Buenos+Aires,+Argentina&amp;z=11&amp;ll=-34.603723,-58.381593" 
+                style="color:#0000FF;text-align:left">See bigger map</a></small>
+            </p>            
+
+        </div>
+    </div>
+
+    </article>
+</section>
+<aside id="aside_frame" class="sidebar">
+	<p>Placeholder for FRAME sidebar content.</p>
+</aside>
+
+<section id="section_button" data-rule-element="508_button" class="508_basic">
+</section>
+<aside id="aside_button" class="sidebar">
+	<p>Placeholder for BUTTON sidebar content.</p>
+</aside>
+<section id="section_form" data-rule-element="508_form" class="508_basic"> 
+    <article>
+        <h2>Accessible (508) HTML Forms</h2>
+        <p>
+            <h4>TO DO:  Defined tab order, using the "Tabindex" attribute, is acceptible but not required</h4>
+            Reference:
+            <ul>
+            <li><a href="https://webstandards.hhs.gov/standards/1">Accessible (508) HTML Forms</a></li>
+            <li><a href="http://www.webstandards.org/learn/tutorials/accessible-forms/beginner/">Accessible HTML/XHTML Forms: Beginner Level</a></li>
+            <li><a href="https://www.section508.va.gov/support/html/10_0.asp">testing forms and form controls</a></li>
+            </ul>
+        <p></p>
+    </article>
+</section>
+<aside id="aside_form" class="sidebar">
+	<p>Placeholder for FORM sidebar content.</p>
+</aside>
+<section id="section_tag" data-rule-element="508_tag" class="508_basic">
+</section>
+<aside id="aside_tag" class="sidebar">
+	<p>Placeholder for TAG sidebar content.</p>
+</aside>
+<section id="section_langAttribute" data-rule-element="508_langAttribute" class="508_basic">
+    <article>
+        <p>
+        	<span class="summary_outline">Summary</span>
+            A default language must be programmatically identified for each page, and for passages that use a language other than the default.
+            <br>
+            The language codes may be two-letter codes, such as en for English, four-letter codes such as en-US for American English, or other, less common, codes. 
+            The two-letter codes are defined in ISO 639-1, although modern best practice dictates that you should use the IANA subtag registry for your language code definitions
+            <span class="summary_outline">Requirement</span>
+            <ul>
+                <li><a href="https://www.section508.va.gov/support/webdev/10_3.asp">Setting the Language of a Page or Part of a Page</a></li>
+                <li>Assistive technology (AT) that supports multiple languages will be able to adjust to the pronunciation of the default natural language.</li>
+                <li>Braille translation software will be able to generate the correct characters based on the default language.</li>
+                <li>Setting the base language is especially important if various passages with different languages are present in the document.</li>
+            </ul>
+            <span class="summary_outline">Resource</span>
+            <ul>
+                <li><a href="https://www.section508.va.gov/support/webdev/10_4.asp" alt="">link</a></li>
+                <li><a href="http://www.w3.org/International/articles/language-tags/">The golden rule when creating language tags is to keep the tag as short as possible</a></li>
+            </ul>
+            <span class="summary_outline">Code Sample</span>
+            <span class="summary_outline">Set the base language of a page</span>
+        <p></p>
+        <pre class="code">
+            <code>
+<!--         -->&lt;html lang="us">...&lt;/html><!--
+         --></code>
+        </pre>
+        <p>Set the language of specific parts of page</p>
+        <pre class="code">
+            <code>
+<!--         -->And with a certain &lt;span lang="fr">je ne sais quoi&lt;/span>, 
+<!--         -->she entered both the room, and his life, forever. 
+<!--         -->&lt;q>My name is Natasha,&lt;/q> she said. 
+<!--         -->&lt;q lang="it">Piacere,&lt;/q> he replied in impeccable Italian.<!--
+         --></code>
+        </pre>
+	</article>
+</section>
+                
+            
+
+    
+        
+
+<aside id="aside_langAttribute" class="sidebar">
+	<p>Placeholder for LANG sidebar content.</p>
+</aside>
+<section id="section_list" data-rule-element="508_list" class="508_basic">
+    <h2>Lists</h2>
+    <p>
+        Source: 
+        <ul>
+            <li>https://www.section508.va.gov/support/html/4_7.asp</li>
+            <li>https://www.section508.va.gov/support/webdev/10_7.asp</li>
+        </ul>
+        
+        <br>Requirement: Each list item must be tagged with HTML markup that can be understood by assistive technology (AT) and style sheets.
+        <span class="summary_outline">Code Sample</span>
+        <pre>
+            <code>
+            	
+            </code>
+        </pre>
+        <ul class="align_left" style="text-align:left;">
+            <li>Containing block size: percent ( % )</li>
+            <li>Viewport size: viewport units ( vw, vh, vmin, vmax )</li>
+            <li>Font height: ( em, rem )</li>
+            <li>Content size: ( auto, min-content, max-content )</li>
+            <li>Combination of the above: ( flex, min-width, max-width )</li>
+            <li>Avoid absolute units</li>
+        </ul>
+	<p></p>
+</section>
+<aside id="aside_list" class="sidebar">
+	<p>Placeholder for LIST sidebar content.</p>
+</aside>
+
+<div id="empty_container" style="clear:both;width:100%;min-width:90%;min-height:150px;border:0px solid red;"></div>
+<footer id="page-footer">
+	<h2>Footer</h2>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--#############################_#############################-->
+<script>
+$(function() {
+    NavigatorExample();
+});
+	function NavigatorExample() {
+        var code_name, app_name, app_version, cookies_enabled, the_platform, the_user_agent;
+		var txt;
+		txt = "Browser CodeName: "    + navigator.appCodeName;
+		txt+= "\nBrowser Name: "      + navigator.appName;
+		txt+= "\nBrowser Version: "   + navigator.appVersion ;
+		txt+= "\nCookies Enabled: "   + navigator.cookieEnabled;
+		txt+= "\nPlatform: "          + navigator.platform; 
+		txt+= "\nUser-agent header: " + navigator.userAgent;
+        console.log(txt);
+	}  
+	/**********************************************************/
+
+	/**********************************************************/
+</script>
+<script src="js/scripts_standard_template.js"></script>
+
+
+</body></html>
