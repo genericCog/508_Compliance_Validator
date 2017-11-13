@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+<!--
+This is a completely client-side tool for validating 508 Compliance.
+It parses html files and uses Javascript and JQuery to check if 508
+rules are being followed.
+Note: Span tags are removed from the source code that is displayed because
+span tags are used for highlighting the validation errors.
+-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<title>508 Compliance Validator</title>
+<script src="jquery-1.11.1.min.js"></script>
+
+<script>
+/**
+@param f: the string contents of a file
+@param s: a string to match against file
+@returns all line numbers that the
+string appears on, ignoring the amount of 
+whitespace between words
+*/
+function get_line_numbers(f, s){
+	var result, indices = [], newlines = [];
+	var regex = RegExp(s.replace(/\s+/g, "\\s*"), "g");
+	while(  result = regex.exec(f)){
+	    indices.push(result.index);
+	}
+	
+	for( var i=0; i< indices.length; i++){
+	    var f_truncated = f.substring(0, indices[i]);
+		//number of newlines is number of lines
+		newlines.push(f_truncated.split(/\r\n|\r|\n/g).length);
+	}
+	
+	return newlines;
+}
+
+/**
+A function called when the form is submitted.
+Files are read and parsed, scanned for errors,
+and finally the errors are output on the page.
+*/
+function readFile(evt){
+	evt.preventDefault();//don't submit the form. Everything is done client-side
+	//clear log
+	$('#dump-area').text('');
+	//loop through all files
+	var files = document.getElementById('fileinput').files;
+	for(var i=0; i < files.length; i++){	  
+	  var f = files[i];
+      var r = new FileReader();
+      r.onload = (
+	  function(inputFile){ 
+	  return function(e) {
+	    var contents = e.target.result;
+		//get rid of span tags so they can be used for 
+		contents = contents.replace(/<\/?span[^>]*>/g,"");
+ 
+	    var doc = document.implementation.createHTMLDocument('');
+ 		doc.open();
+		doc.write(contents);
+		doc.close();
+ 
+		doc.body.innerHTML = contents;
+		//need to keep the file contents to output file on page with errors highlighted
+		inputFile.contents = doc.documentElement.outerHTML;
+		validateFile(inputFile, doc);
+		outputFile(inputFile, doc);
+      }
+	  }(f));
+      r.readAsText(f);
+	}
+	
+}
+
+/**
+This method validates each file
+against 508 rules that are checked in the form.
+@param f: the file object. 
+The text contents of the file
+should be attached to the file as "contents"
+@param doc: a document object 
+created from the file
+Logs invalid things via a function
+*/
+function validateFile(f, doc){
+	//required rules
+	if($('#img_rules').is(':checked')){imgTagRules(f, doc);}
+	//if($('#anchor_rules').is(':checked')){anchorTagRules(f, doc);}
+	if($('#table_rules').is(':checked')){tableRules(f, doc);}
+	if($('#frame_rules').is(':checked')){frameRules(f, doc);}
+	if($('#button_rules').is(':checked')){buttonRules(f, doc);}
+	if($('#form_rules').is(':checked')){formRules(f, doc);}
+	
+	//warning rules
+	if($('#title_rules').is(':checked')){ titleTagRule(f, doc);}
+	if($('#lang_rules').is(':checked')){ langAttributeRule(f, doc);}
+	if($('#list_rules').is(':checked')){listRule(f, doc);}
+}
+
+/**
+Check document against rules for image tags.
+Rule 1: Images must have alt text and alt
+text must not be empty.
+*/
+function imgTagRules(f, doc){
+   
+   var imgTags = $('img', doc);
+   for(var i=0; i < imgTags.length; i++){
+      var imgTagText = $(imgTags[i])[0].outerHTML;
+	  if(!imgTags[i].hasAttribute('alt')){
+		var line_number = get_line_numbers(f.contents, imgTagText);
+	    logError(f.name, line_number, 'Image tag does not have alt attribute');
+		wrap_in_error_tag(imgTags[i]);
+      }else if($(imgTags[i]).attr('alt') === ''){
+		  var line_number = get_line_numbers(f.contents, imgTagText);
+		  logError(f.name, line_number, "Image tag's alt attribute is empty. This should only be the case if it is a decorative image.");
+		  wrap_in_error_tag(imgTags[i]);
+	  } 
+   }
+}
+
+/**
+Anchor tag rules.
+Rule 1. If the anchor tag contains an image, it must have alt text.
+THIS RULE IS NO LONGER USED AND WAS PROBABLY INCORRECT ANYWAY
+*/
+function anchorTagRules(f, doc){
+	var imageAnchorTags = $('a[type="image"]', doc);
+	for(var i=0; i < imageAnchorTags.length; i++){
+	  var anchorText = $(imageAnchorTags[i])[0].outerHTML;
+	  if(!imageAnchorTags[i].hasAttribute('alt')){
+		var line_number = get_line_numbers(f.contents, anchorText);
+	    logError(f.name, line_number, 'Anchor tag does not have alt attribute and it contains an image.');
+		wrap_in_error_tag(imageAnchorTags[i]);
+      }else if($(imageAnchorTags[i]).attr('alt') === ''){
+		  var line_number = get_line_numbers(f.contents, anchorText);
+		  logError(f.name, line_number, "Anchor tag's alt attribute is empty and it contains an image. This should only be the case if it is a decorative image.");
+		  wrap_in_error_tag(imageAnchorTags[i]);
+	  }
+	}
+}
+
+/**
+Table rules.
+Rule 1: Tables must have TH tags.
+Rule 2: TH tags must have text
+*/
+function tableRules(f, doc){
+	var tables = $('table', doc);
+	for(var i=0; i < tables.length; i++){
+	  var thTags = $(tables[i]).find('th');
+	  if(thTags.length === 0){
+		  var tableText = $(tables[i])[0].outerHTML;
+		  var line_number = get_line_numbers(f.contents, tableText);
+		  logError(f.name, line_number, 'Table does not have TH tags');
+		  wrap_in_error_tag(tables[i]);
+	  }
+	  for(var j=0; j < thTags.length; j++){
+		  if($(thTags[j]).text() === ''){
+		      var thText = $(thTags[j])[0].outerHTML;
+			  var line_number = get_line_numbers(f.contents, thText);
+			  logError(f.name, line_number, 'TH tag has no text');
+			  wrap_in_error_tag(thTags[j]);
+		  }
+	  }
+	}
+}
+
+/**
+Frame rules.
+Rule 1: title attribute is required
+*/
+function frameRules(f, doc){
+	var frames = $('frame, iframe', doc);
+	for(var i=0; i < frames.length; i++){
+      var frameText = $(frames[i])[0].outerHTML;
+	  if(!frames[i].hasAttribute('title')){
+		var line_number = get_line_numbers(f.contents, frameText);
+	    logError(f.name, line_number, 'Frame tag does not have title attribute');
+		wrap_in_error_tag(frames[i]);
+      }else if($(frames[i]).attr('title') === ''){
+		  var line_number = get_line_numbers(f.contents, frameText);
+		  logError(f.name, line_number, "Frame tag's title attribute is empty");
+		  wrap_in_error_tag(frames[i]);
+	  }  
+   }
+}
+
+/**
+Button rules.
+Buttons, herein refers to inputs of type submit or button or a button element.
+Rule 1: Buttons must have a name or value attribute
+*/
+function buttonRules(f, doc){
+    var buttons = $('button, input[type="button"], input[type="submit"]', doc);
+	for(var i=0; i < buttons.length; i++){
+	   var buttonText = $(buttons[i])[0].outerHTML;
+	   if((!buttons[i].hasAttribute('name') || $(buttons[i]).attr('name') === '')
+	       &&
+	      (!buttons[i].hasAttribute('value') || $(buttons[i]).attr('value') === '')
+		)
+	   {
+		  var line_number = get_line_numbers(f.contents, buttonText);
+		  logError(f.name, line_number, 'Button does not have a name or value.');
+		  wrap_in_error_tag(buttons[i]);
+	   }
+	}
+}
+
+/**
+Form rules.
+Rule 1: All form inputs must have a label.
+Rule 2: Form labels must be associated with a valid input.
+Rule 3: Labels should have text.
+*/
+function formRules(f, doc){
+	var forms = $('form', doc);
+	for(var i=0; i < forms.length; i++){
+	    var inputs = $(forms).find('input');
+		for(var j=0; j < inputs.length; j++){
+		    var inputId = $(inputs[j]).attr('id');
+			var label = $('label[for="' + inputId + '"]', forms);
+			var inputText = $(inputs[j])[0].outerHTML;
+			if(label.length === 0){
+				var line_number = get_line_numbers(f.contents, inputText);
+			    logError(f.name, line_number, 'Form input does not have a label');
+				wrap_in_error_tag(inputs[j]);
+			}
+		}
+		var labels = $(forms).find('label');
+		for(var j=0; j< labels.length; j++){
+		    var label_for = $(labels[j]).attr('for');
+			var labelText = $(labels[j])[0].outerHTML;
+			if(!labels[j].hasAttribute('for') || label_for === ''){
+				var line_number = get_line_numbers(f.contents, labelText);
+				logError(f.name, line_number, 'Label does not have "for" attribute');
+				wrap_in_error_tag(labels[j]);
+			}
+			else if($('#' + label_for, doc).length == 0){
+				var line_number = get_line_numbers(f.contents, labelText);
+				logError(f.name, line_number, "Label's for attribute points to invalid id");
+				wrap_in_error_tag(labels[j]);
+			}
+			if($(labels[j]).text() === ''){
+				var line_number = get_line_numbers(f.contents, labelText);
+			    logError(f.name, line_number, "Label has no text.");
+				wrap_in_error_tag(labels[j]);
+			}
+		}
+	}
+}
+
+//Strongly suggested rules
+/**
+Requirement for title tag.
+1. A warning is generated if there is no title tag.
+2. A warning is generated if the title tag is empty
+*/
+function titleTagRule(f, doc){
+    var title = $('title', doc);
+	if($(title).length === 0){
+		logError(f.name, 0, 'Warning: There is no title tag');
+	}
+	else if($(title).text() === ''){
+		var line_number = get_line_numbers(f.contents, $(title)[0].outerHTML);
+	    logError(f.name, line_number, 'Warning: Title tag contains no text');
+		wrap_in_warning_tag(title);
+	}
+}
+
+/**
+Requirement for the html tag to have a language specified.
+1. A warning is generated if there is no language attribute
+2. A warning is generated if language attribute is empty string
+TODO - a.cherochak:
+20170515.1300: look up jquery html tag interactions
+*/
+function langAttributeRule(f, doc){
+    var html = $('html', doc);
+	if($(html).length === 0){
+		logError(f.name, 0, 'Warning: There is no html tag');
+	}
+	else if(! $(html)[0].hasAttribute('lang') || $(html).attr('lang') === ''){
+		var line_number = get_line_numbers(f.contents, '<html');
+	    logError(f.name, line_number, 'Warning: No language specified in html tag');
+	}
+}
+
+/**
+Check if lists only contain one element
+1. Warning is generated if lists only contain one element
+*/
+function listRule(f, doc){
+    var lists = $('ul, ol, dl', doc);
+	for(var i=0; i< lists.length; i++){
+	    if($(lists[i]).children().length === 1){
+			var line_number = get_line_numbers(f.contents, $(lists[i])[0].outerHTML);
+			logError(f.name, line_number, 'Warning: List only contains one item');
+			wrap_in_warning_tag(lists[i]);
+		}
+		else if($(lists[i]).children().length === 0){
+			var line_number = get_line_numbers(f.contents, $(lists[i])[0].outerHTML);
+			logError(f.name, line_number, 'Warning: List contains no items');
+			wrap_in_warning_tag(lists[i]);
+		}
+	}
+}
+/**
+Logs errors. This method can be updated depending on requirements.
+@param fileName string
+@param line integer or array of integers
+@param message string
+*/
+function logError(fileName, line, message){
+	console.log(fileName + ':' + line + ':' + message);
+	//append to dump-area
+	$('#dump-area').append('<p></p>');
+	$('#dump-area p:last-child').text(fileName + ':' + line + ':' + message);
+	
+}
+
+/**
+Logs the contents of a file
+@param f string contents of file
+@param doc a Document object
+*/
+function outputFile(f, doc){
+    //append to end of html body
+	$('#dump-area').append('<p class="file-output"></p>');
+	var html = strip_html_tags(doc.documentElement.outerHTML);
+	var lines = html.split(/\r\n|\r|\n/g);
+	var insert_area = $('#dump-area p:last-child');
+	$(insert_area).append("File: " + f.name + "<br />");
+	for(var i=1; i <= lines.length; i++){
+	    $(insert_area).append(i + "|" + lines[i-1] + '</br>');
+	}
+	
+}
+
+/**
+Wrap a tag in a span tag so that it will be highlighted red
+*/
+function wrap_in_error_tag(node){
+      $(node).wrap('<span class="error-markup red" />');
+}
+
+/**
+Wrap a tag in a span tag so that it will be highlighted yellow
+*/
+function wrap_in_warning_tag(node){
+      $(node).wrap('<span class="warning-markup yellow" />');
+}
+/**
+Preserves span tags so that syntax highlighting can be done
+THIS CURRENTLY WON'T WORK PROPERLY IF THERE ARE SPAN TAGS IN SOURCE CODE
+POSSIBLE SOLUTION: GET RID OF SPAN TAGS IN SOURCE CODE (I don't think there are any rules pertaining to them anyway)
+*/
+function strip_html_tags(html){
+	return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+	//.replace(/&lt;span class=\"error-markup red\"&gt;/g, '<span class="error-markup red">')
+	.replace(/&lt;span([^&]*)&gt;/g, "<span$1>") //can probably count on & not being in tag since these are tags made by this program
+	.replace(/&lt;\/span&gt;/g, '</span>');
+}
+$(document).ready(
+   function(){
+	   $(document).on('submit', 'form#fileform', readFile); 
+}
+);
+</script>
+<style>
+span.red{
+  background-color: red;
+}
+span.yellow{
+  background-color: yellow;
+}
+</style>
+</head>
+
+<body>
+<h2>508 Compliance Validator</h2>
+<p>Select files to be validated. Note that span tags are removed from the source code when displayed.</p>
+<form action="#" id="fileform">
+    <div>
+    <h3>508 Required Rules to Check</h3>
+    <input id="img_rules" type="checkbox" name="img_rules" checked />
+    <label for="img_rules">Validate img tags have alt text</label><br/>
+    <!--<input id="anchor_rules" type="checkbox" name="anchor_rules" checked />
+    <label for="anchor_rules">Validate anchor tags with type="image" have alt text</label><br/>-->
+    <input id="table_rules" type="checkbox" name="table_rules" checked />
+    <label for="table_rules">Validate table tags have TH tags</label><br/>
+    <input id="frame_rules" type="checkbox" name="frame_rules" checked />
+    <label for="frame_rules">Validate frames have titles</label><br/>
+    <input id="button_rules" type="checkbox" name="button_rules" checked />
+    <label for="button_rules">Validate buttons have a name or value attribute</label><br/>
+    <input id="form_rules" type="checkbox" name="form_rules" checked />
+    <label for="form_rules">Validate form inputs all have labels and labels are associated properly.</label><br/>
+    </div>
+    <div>
+    <h3>508 Strongly Encouraged Rules to Check</h3>
+    <input id="title_rules" type="checkbox" name="title_rules" checked />
+    <label for="title_rules">Validate the page has a title tag</label><br/>
+    <input id="lang_rules" type="checkbox" name="lang_rules" checked />
+    <label for="lang_rules">Validate the html tag has a lang attribute</label><br/>
+    <input id="list_rules" type="checkbox" name="list_rules" checked />
+    <label for="list_rules">Validate that lists have more than one item</label><br/>
+    </div>
+    <div>
+    <h3>Select Files</h3>
+    <input id="fileinput" type="file" webkitdirectory directory multiple />
+    </div>
+    <div>
+    <h3>Validate</h3>
+    <input type="submit" value="Process" />
+    </div>
+</form>
+<div id="dump-area">
+</div>
+</body>
+</html>
