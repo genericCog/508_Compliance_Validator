@@ -402,29 +402,39 @@
 
 
 
-
-
-
-
-
-
-
-
-
 <!--#############################_#############################-->
 <script>
 $(function() {
     NavigatorExample();
 });
 	function NavigatorExample() {
-        var code_name, app_name, app_version, cookies_enabled, the_platform, the_user_agent;
+    var className = this.constructor.toString();
+        var code_name = navigator.appCodeName;
+        var app_name = navigator.appName;
+        var version = navigator.appVersion;
+        var cookies = navigator.cookieEnabled;
+        var machine = navigator.platform;
+        var agent = navigator.appCodeName;
+        var network = navigator.NetworkInformation;
+        var message = "";
+    if (navigator.mimeTypes && navigator.mimeTypes.length > 0) {// Internet Explorer supports the mimeTypes collection, but it is always empty
+        var mimes = navigator.mimeTypes;
+        for (var i=0; i < mimes.length; i++) {
+            console.log('MIME Types' +'\n' + mimes[i].type + '\n' + mimes[i].description + '\n__________');
+        }
+    }
+    else {
+        message = "Your browser does not support this example!";
+    }
+        var os = navigator.oscpu;
 		var txt;
-		txt = "Browser CodeName: "    + navigator.appCodeName;
-		txt+= "\nBrowser Name: "      + navigator.appName;
-		txt+= "\nBrowser Version: "   + navigator.appVersion ;
-		txt+= "\nCookies Enabled: "   + navigator.cookieEnabled;
-		txt+= "\nPlatform: "          + navigator.platform; 
-		txt+= "\nUser-agent header: " + navigator.userAgent;
+		txt = "Browser CodeName: "    + code_name;
+		txt+= "\nBrowser Name: "      + app_name;
+		txt+= "\nBrowser Version: "   + version ;
+		txt+= "\nCookies Enabled: "   + cookies;
+		txt+= "\nPlatform: "          + machine; 
+		txt+= "\nUser-agent header: " + agent;
+		txt+= "\nOperating System: " + os;
         console.log(txt);
 	}  
 	/**********************************************************/
